@@ -1,6 +1,6 @@
 /** A small, disposable LOCAL test stack. Hosted credentials are never generated or changed. */
 import { randomBytes, createHmac } from "node:crypto";
-import { mkdir, writeFile, readFile, access, chmod } from "node:fs/promises";
+import { mkdir, writeFile, readFile, access, chmod, readdir } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -16,7 +16,9 @@ function compose(...args) { run("docker", ["compose", "-p", "bu-local", "-f", co
 const command = process.argv[2] || "start";
 if (command === "stop") { compose("stop"); process.exit(0); }
 if (command === "sql-test") {
-  run("docker", ["exec", "-i", "bu-local-db", "psql", "-U", "postgres", "-d", "postgres", "-v", "ON_ERROR_STOP=1"], await readFile(resolve(root, "supabase/tests/security.sql"), "utf8"));
+  for (const file of (await readdir(resolve(root, "supabase/tests"))).filter(name => name.endsWith(".sql")).sort()) {
+    run("docker", ["exec", "-i", "bu-local-db", "psql", "-U", "postgres", "-d", "postgres", "-v", "ON_ERROR_STOP=1"], await readFile(resolve(root, "supabase/tests", file), "utf8"));
+  }
   process.exit(0);
 }
 if (command !== "start") throw new Error("Use start, stop, or sql-test");
@@ -105,7 +107,6 @@ compose("up", "-d", "--wait");
 run("docker", ["exec", "-i", "bu-local-db", "psql", "-U", "postgres", "-v", "ON_ERROR_STOP=1"], `create or replace function auth.uid() returns uuid language sql stable as $$ select coalesce(nullif(current_setting('request.jwt.claim.sub', true), ''), (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub'))::uuid $$;`);
 // Apply each migration once, transactionally. A failed migration cannot be recorded as applied.
 run("docker", ["exec", "bu-local-db", "psql", "-U", "postgres", "-v", "ON_ERROR_STOP=1", "-c", "create schema if not exists bu_local; create table if not exists bu_local.migrations (name text primary key); revoke all on schema bu_local from public;" ]);
-const { readdir } = await import("node:fs/promises");
 for (const file of (await readdir(resolve(root, "supabase/migrations"))).filter((name) => /^\d+_[\w-]+\.sql$/.test(name)).sort()) {
   const applied = spawnSync("docker", ["exec", "bu-local-db", "psql", "-U", "postgres", "-Atc", `select name from bu_local.migrations where name = '${file}'`], { encoding: "utf8" });
   if (applied.status !== 0) throw new Error("Cannot read migration history");

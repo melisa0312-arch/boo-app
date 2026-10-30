@@ -5,11 +5,13 @@ import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { saveProfile } from "@/actions/account";
 import { ActionForm } from "@/components/action-form";
 import { Eyebrow } from "@/components/ui";
+import { personalCopy } from "@/features/personalization/copy";
 
 export default async function ProfilePage() {
   const { profile, membership } = await getContext();
   const t = await getDictionary();
   const locale = await getLocale();
+  const p = personalCopy(locale);
   return <div className="onboarding-grid"><aside className="onboarding-copy"><Eyebrow>US / 01</Eyebrow><h1>{t.profileTitle}</h1><p>{t.profileBody}</p><div className="profile-art" aria-hidden="true"><UserRound /><span>100%<br />YOU.</span><Heart /></div></aside>
     <section className="paper-panel"><ActionForm action={saveProfile} submit={t.saveProfile}>
       <label className="field">{t.name}<input name="display_name" autoComplete="given-name" maxLength={60} required defaultValue={profile.display_name ?? ""} /></label>
@@ -17,6 +19,7 @@ export default async function ProfilePage() {
       <label className="field">{t.timezone}<input name="timezone" list="profile-timezones" required defaultValue={profile.timezone} /></label>
       <datalist id="profile-timezones"><option value="Europe/Sofia" /><option value="Europe/London" /><option value="Europe/Berlin" /><option value="America/New_York" /></datalist>
     </ActionForm>
+    {profile.display_name && <Link href="/preferences" className="btn btn-secondary w-full mt-6">{p.profile}<ArrowUpRight size={18} /></Link>}
     {membership && <div className="panel-links"><Link href="/home"><ArrowLeft size={15} />{t.home}</Link><Link href="/couple">{t.couple}<ArrowUpRight size={15} aria-hidden="true" /></Link></div>}
     </section></div>;
 }

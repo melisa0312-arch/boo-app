@@ -1,0 +1,32 @@
+-- SQL-role outsider checks need no third registered account and leave no records.
+begin;
+select '1..14';
+create function pg_temp.ok(n integer, passed boolean, label text) returns text language plpgsql as $$ begin if passed is distinct from true then raise exception 'not ok % - %',n,label; end if; return format('ok %s - %s',n,label); end; $$;
+create function pg_temp.denied(statement text) returns boolean language plpgsql as $$ begin execute statement; return false; exception when insufficient_privilege then return true; end; $$;
+insert into auth.users(id,email) values ('20000000-0000-4000-8000-000000000001','step02-a@example.test'),('20000000-0000-4000-8000-000000000002','step02-b@example.test');
+create temporary table fixture(name text primary key,value text);
+grant all on fixture to authenticated;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000001',true);
+select set_config('request.jwt.claims','{"sub":"20000000-0000-4000-8000-000000000001","role":"authenticated"}',true);
+insert into fixture values ('couple',public.create_couple('Step02 SQL fixture')::text);
+insert into public.activity_sessions(couple_id,created_by,activity_date,start_time,end_time,starting_location,timing) select value::uuid,auth.uid(),current_date+1,'23:00','02:00','sofia','future' from fixture where name='couple';
+insert into fixture select 'session',id::text from public.activity_sessions where created_by=auth.uid();
+select pg_temp.ok(1,(select count(*) from public.user_preferences)=1,'only own personal profile visible');
+select pg_temp.ok(2,pg_temp.denied($s$update public.user_preferences set completed_at=now()$s$),'cannot forge completion');
+select pg_temp.ok(3,pg_temp.denied($s$update public.user_preferences set answers='{"ratings":{"cars":5}}'$s$),'private drafts only mutate through checked RPC');
+select pg_temp.ok(4,pg_temp.denied(format($s$insert into public.tonight_responses(session_id,user_id,context_revision) values(%L,auth.uid(),1)$s$,(select value from fixture where name='session'))),'cannot write raw questionnaire rows');
+select pg_temp.ok(5,pg_temp.denied(format($s$insert into public.match_feedback(session_id,user_id,concept_id,context_revision,reason) values(%L,auth.uid(),'quiet-ritual',1,'not_tonight')$s$,(select value from fixture where name='session'))),'cannot forge feedback directly');
+select pg_temp.ok(6,pg_temp.denied(format($s$insert into public.match_results(session_id,context_revision,iteration,recommendations,input_fingerprint) values(%L,1,1,'[]','forged')$s$,(select value from fixture where name='session'))),'cannot forge a joint result');
+select pg_temp.ok(7,(select ends_next_day and ends_at>starts_at from public.activity_sessions limit 1),'existing overnight time model retained');
+select pg_temp.ok(8,(public.calculate_couple_match((select value::uuid from fixture where name='session'))->>'state')='waiting','incomplete couple does not finalize');
+-- Simulate an unrelated authenticated identity at the RLS boundary. No Auth account is created.
+select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000099',true);
+select set_config('request.jwt.claims','{"sub":"20000000-0000-4000-8000-000000000099","role":"authenticated"}',true);
+select pg_temp.ok(9,(select count(*) from public.activity_sessions)=0,'third user cannot read shared sessions');
+select pg_temp.ok(10,pg_temp.denied(format('select public.tonight_progress(%L)',(select value from fixture where name='session'))),'third user cannot read progress or reveals');
+select pg_temp.ok(11,pg_temp.denied(format('select public.calculate_couple_match(%L)',(select value from fixture where name='session'))),'third user cannot trigger or inspect joint match');
+select pg_temp.ok(12,pg_temp.denied(format($s$select public.save_tonight_response(%L,'{}',0,'quick',false,0,1,false)$s$,(select value from fixture where name='session'))),'third user cannot save a response');
+select pg_temp.ok(13,pg_temp.denied(format($s$select public.update_tonight_context(%L,'{}',1)$s$,(select value from fixture where name='session'))),'third user cannot edit shared context');
+select pg_temp.ok(14,pg_temp.denied(format($s$select public.select_match_concept(%L,'00000000-0000-4000-8000-000000000000','quiet-ritual')$s$,(select value from fixture where name='session'))),'third user cannot select a concept');
+rollback;

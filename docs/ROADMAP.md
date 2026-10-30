@@ -8,6 +8,8 @@ Implemented: Next.js/TypeScript/Tailwind architecture, Bulgarian/English, brand 
 
 ## NOW
 
+Step 02 now implements private personal onboarding, independent Quick/Detailed Tonight answers, shared planning context, readiness/optional reveals, and deterministic concept matching with feedback and selection. Real catalogs/venues, route/price/opening checks, movie/home/trip adapters and personalized dress recommendations remain future slices.
+
 - Go Out / Tonight Mode: date/time/origin → shared mood and interests → budget, distance, constraints → real place/activity candidates → matching and selection.
 - Stay In: personalized home activities and shared experiences.
 - BŪ Watch: movie discovery, film matching, partner taste and availability, shared watchlist and viewing history.
@@ -42,7 +44,7 @@ Implemented: Next.js/TypeScript/Tailwind architecture, Bulgarian/English, brand 
 
 ## Recommended slice order
 
-1. Tonight mood/interests/constraints with profile preference editing and tested persistence. Refine the current saved draft rather than creating a second planning model.
+1. Completed in Step 02: Tonight mood/interests/constraints with private profile preference editing, independent answers, fair concept matching and persisted drafts. Continue refining the existing session model.
 2. Real curated activity/place catalog with provenance, availability, and matching explanations. External location services require a separate integration decision; manual origins remain valid.
 3. Turn a selected activity into a date invitation, with partner response and optional authorized Realtime updates.
 4. Wishlist + memories around completed dates; then BŪ Watch and the first film matching slice.

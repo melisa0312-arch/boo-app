@@ -2,6 +2,8 @@
 
 This project uses the existing GitHub repository **[melisa0312-arch/boo-app](https://github.com/melisa0312-arch/boo-app)**. The application is at the repository root. No second repository, Vercel project, public deployment, or remote database change is created by this preparation.
 
+For the existing hosted site and Step 02 updates, use [STEP02_RELEASE](STEP02_RELEASE.md). It covers only the new additive migrations, staging checks and the existing protected Preview workflow. The initial-import procedure below is historical setup guidance; do not create another Vercel project or replace the existing configuration for Step 02.
+
 ## What is ready
 
 - Next.js App Router with server rendering, Server Actions, Proxy, and Supabase SSR cookies. Use Vercel's Next.js integration, not GitHub Pages or a static export.

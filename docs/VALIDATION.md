@@ -1,5 +1,7 @@
 # Step 01 validation — 2026-10-30
 
+For the current personalization/matching slice and full regression results, see [STEP02_VALIDATION](STEP02_VALIDATION.md). This file retains the foundation's original validation history.
+
 Executed in the managed Linux workspace using Node 24.19.0 and the committed dependency lockfile. The app was tested against a disposable local stack of official Supabase GoTrue 2.197.0, PostgREST 16.5, PostgreSQL 17.11, and Kong 2.8.1. This is real auth and PostgreSQL persistence, not mocked requests.
 
 | Check | Result |

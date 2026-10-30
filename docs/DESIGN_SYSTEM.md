@@ -30,3 +30,11 @@ Display faces are reserved for brand/headings, with readable Sofia Sans labels, 
 - Motion is limited to short hover/focus transitions and a loading indicator. `prefers-reduced-motion` removes animation and scrolling effects.
 
 Use Bulgarian first and keep both typed dictionaries complete. A user's language cookie applies immediately and persists; profile setup can also save the preferred language. Dates use the selected language, and session times are always shown with their stored timezone. Test on narrow phones as well as desktop; check long Bulgarian words, overnight labels, and variable partner names.
+
+## Step 02 interaction language
+
+The personal experience has one focused question, twelve separate interest-rating cards, native sliders for style/energy scales, bounded choice tiles, an animated progress line, visible autosave status, and deliberate Back/Next/Skip controls. Optional fields are labeled. The summary uses self-reported 1–5 bars, never inferred compatibility percentages. Both language copies live in the feature module and question labels, with tests for complete translations. Native range controls support keyboard Home/End/arrow interaction; choices retain native radio/checkbox semantics and visible focus. Reduced-motion rules disable scene/progress animations.
+
+Shared planning, private feelings and shared results are visually distinct stages. A compact strip keeps date, local clocks, rollover and timezone visible. Readiness shows actual member names and a waiting slot for an absent member. Personal inputs never appear in the shared result unless a submitted Tonight response was explicitly revealed; the personal profile never becomes shared.
+
+Results use an iris editorial hero, lime statement artwork, one top concept and three pastel alternatives when feasible. Explanations disclose constraints and balancing policy, not personal ratings. All concepts are labeled as internal ideas and all durations/cost bands as assumptions. Empty/no-match states explain the limitation instead of inventing suggestions. Selection and feedback controls perform real database mutations.

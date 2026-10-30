@@ -4,19 +4,23 @@ import { requireCouple } from "@/lib/auth";
 import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { ArrowLink, Eyebrow, OrbitArt } from "@/components/ui";
 import { SessionList } from "@/components/session-list";
+import { personalCopy } from "@/features/personalization/copy";
 
 export default async function HomePage() {
   const { supabase, profile, coupleId } = await requireCouple();
   const t = await getDictionary();
   const locale = await getLocale();
-  const [sessions, partner] = await Promise.all([
+  const p = personalCopy(locale);
+  const [sessions, partner, preferences] = await Promise.all([
     supabase.from("activity_sessions").select("*").eq("couple_id", coupleId).order("created_at", { ascending: false }).limit(5),
     supabase.rpc("get_partner_name"),
+    supabase.from("user_preferences").select("completed_at").single(),
   ]);
-  if (sessions.error || partner.error) throw new Error("Unable to load your world");
+  if (sessions.error || partner.error || preferences.error) throw new Error("Unable to load your world");
   return <>
     <section className="home-intro"><div><Eyebrow><span className="status-dot" />{t.greeting}, {profile.display_name} + {partner.data || t.partner}</Eyebrow><h1>{t.homeTitle}<br /><span>{t.homeAccent}</span></h1></div><p>{t.homeBody}</p></section>
     {!partner.data && <Link href="/couple" className="partner-banner"><Heart size={17} aria-hidden="true" />{t.waiting}<span>{t.issueInvite} <ArrowUpRight size={16} aria-hidden="true" /></span></Link>}
+    {!preferences.data.completed_at && <Link href="/preferences" className="personal-invite"><Sparkles size={21} /><span><strong>{p.title}</strong><small>{p.intro}</small></span><ArrowUpRight size={22} /></Link>}
     <section className="adventure-hero"><div className="adventure-copy"><Eyebrow><Sparkles size={16} aria-hidden="true" />{t.heroEyebrow}</Eyebrow><h2>{t.heroTitle}</h2><p>{t.heroBody}</p><ArrowLink href="/tonight">{t.adventure}</ArrowLink></div><OrbitArt compact /><span className="hero-footnote" aria-hidden="true">YOU + ME + A LITTLE POSSIBILITY</span></section>
     <section className="world-section" aria-labelledby="four-worlds"><Eyebrow><span id="four-worlds">{t.fourWorlds}</span></Eyebrow><div className="world-grid">
       <article className="world-card world-now"><div className="world-card-top"><Compass size={27} aria-hidden="true" /><span>01</span></div><h2>{t.nowTitle}<ArrowUpRight size={25} aria-hidden="true" /></h2><p>{t.nowBody}</p><Link href="/tonight">{t.available}<ArrowUpRight size={17} aria-hidden="true" /></Link></article>

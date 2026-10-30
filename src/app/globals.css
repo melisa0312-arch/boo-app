@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../features/personalization/experience.css";
 
 @theme inline {
   --color-ivory: #f8f5ee;

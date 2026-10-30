@@ -2,6 +2,10 @@
 
 A real Bulgarian-first couples app built with Next.js App Router, strict TypeScript, Tailwind CSS, Supabase Auth, PostgreSQL, and RLS. Step 01 implements independent accounts, secure pairing, profile setup, and a persisted first step of Tonight Mode. No fake recommendations, database mocks, or localStorage persistence.
 
+Step 02 adds private personal onboarding, resumable Quick/Detailed Tonight questionnaires, shared planning constraints, explicit answer reveals, readiness, a deterministic fair concept match engine, private feedback/reroll, and a selected draft concept on the existing session. Begin at **Profile → Preferences** or the Home personalization prompt; after saving a Tonight session, choose **Continue evening**. See [Step 02 safe release](docs/STEP02_RELEASE.md) before changing the existing hosted database or Vercel site. All new migrations are prepared for review; local setup never applies them remotely.
+
+[Step 02 validation and desktop/mobile screenshots](docs/STEP02_VALIDATION.md) record the completed local checks and hosted verification that remains outstanding.
+
 For a browser-accessible hosted preview without installing anything locally, follow [Vercel and Supabase deployment preparation](docs/DEPLOYMENT.md). The repository is prepared for Vercel, but automatic Git-triggered deployments are disabled and no public deployment has been performed. All environment files, including templates named `.env*`, are intentionally excluded from GitHub; configuration variable names are documented below.
 
 ## Run locally

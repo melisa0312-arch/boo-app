@@ -5,16 +5,30 @@ export type Database = {
 
   "public": {
           Tables: {
-            "activity_sessions": {
+            "activity_concepts": {
                   Row: {
-                    "activity_date": string,"activity_mode": string,"couple_id": string,"created_at": string,"created_by": string,"end_time": string,"ends_at": string,"ends_next_day": boolean,"id": string,"start_time": string,"starting_location": string,"starts_at": string,"status": string,"timezone": string,"timing": string,"updated_at": string
+                    "catalog_version": string,"cost_level": number,"description_bg": string,"description_en": string,"duration_minutes": number,"energy": number,"environment": string,"id": string,"interests": (string)[],"novelty": number,"pace": number,"social": number,"tags": (string)[],"title_bg": string,"title_en": string,"transport_required": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "activity_date": string,"activity_mode"?: string,"couple_id": string,"created_at"?: string,"created_by": string,"end_time": string,"ends_at"?: string,"ends_next_day"?: boolean,"id"?: string,"start_time": string,"starting_location": string,"starts_at"?: string,"status"?: string,"timezone"?: string,"timing": string,"updated_at"?: string
+                    "catalog_version"?: string,"cost_level": number,"description_bg": string,"description_en": string,"duration_minutes": number,"energy": number,"environment": string,"id": string,"interests": (string)[],"novelty": number,"pace": number,"social": number,"tags"?: (string)[],"title_bg": string,"title_en": string,"transport_required"?: string | null
                   }
                   Update: {
-                    "activity_date"?: string,"activity_mode"?: string,"couple_id"?: string,"created_at"?: string,"created_by"?: string,"end_time"?: string,"ends_at"?: string,"ends_next_day"?: boolean,"id"?: string,"start_time"?: string,"starting_location"?: string,"starts_at"?: string,"status"?: string,"timezone"?: string,"timing"?: string,"updated_at"?: string
+                    "catalog_version"?: string,"cost_level"?: number,"description_bg"?: string,"description_en"?: string,"duration_minutes"?: number,"energy"?: number,"environment"?: string,"id"?: string,"interests"?: (string)[],"novelty"?: number,"pace"?: number,"social"?: number,"tags"?: (string)[],"title_bg"?: string,"title_en"?: string,"transport_required"?: string | null
+                  }
+                  Relationships: [
+
+                  ]
+                },"activity_sessions": {
+                  Row: {
+                    "activity_date": string,"activity_mode": string,"budget_level": number,"context_completed": boolean,"context_revision": number,"couple_id": string,"created_at": string,"created_by": string,"end_time": string,"ends_at": string,"ends_next_day": boolean,"environment": string,"id": string,"max_travel_minutes": number,"selected_concept_id": string | null,"start_time": string,"starting_location": string,"starts_at": string,"status": string,"timezone": string,"timing": string,"transport": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "activity_date": string,"activity_mode"?: string,"budget_level"?: number,"context_completed"?: boolean,"context_revision"?: number,"couple_id": string,"created_at"?: string,"created_by": string,"end_time": string,"ends_at"?: string,"ends_next_day"?: boolean,"environment"?: string,"id"?: string,"max_travel_minutes"?: number,"selected_concept_id"?: string | null,"start_time": string,"starting_location": string,"starts_at"?: string,"status"?: string,"timezone"?: string,"timing": string,"transport"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "activity_date"?: string,"activity_mode"?: string,"budget_level"?: number,"context_completed"?: boolean,"context_revision"?: number,"couple_id"?: string,"created_at"?: string,"created_by"?: string,"end_time"?: string,"ends_at"?: string,"ends_next_day"?: boolean,"environment"?: string,"id"?: string,"max_travel_minutes"?: number,"selected_concept_id"?: string | null,"start_time"?: string,"starting_location"?: string,"starts_at"?: string,"status"?: string,"timezone"?: string,"timing"?: string,"transport"?: string,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -28,6 +42,12 @@ isOneToOne: false
       columns: ["created_by"]
 isOneToOne: false
       referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "session_concept_fkey"
+      columns: ["selected_concept_id"]
+isOneToOne: false
+      referencedRelation: "activity_concepts"
       referencedColumns: ["id"]
     }
                   ]
@@ -103,6 +123,58 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"match_feedback": {
+                  Row: {
+                    "concept_id": string,"context_revision": number,"created_at": string,"id": string,"reason": string,"session_id": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "concept_id": string,"context_revision": number,"created_at"?: string,"id"?: string,"reason": string,"session_id": string,"user_id": string
+                  }
+                  Update: {
+                    "concept_id"?: string,"context_revision"?: number,"created_at"?: string,"id"?: string,"reason"?: string,"session_id"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "match_feedback_concept_id_fkey"
+      columns: ["concept_id"]
+isOneToOne: false
+      referencedRelation: "activity_concepts"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "match_feedback_session_id_fkey"
+      columns: ["session_id"]
+isOneToOne: false
+      referencedRelation: "activity_sessions"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "match_feedback_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"match_results": {
+                  Row: {
+                    "catalog_version": string,"context_revision": number,"created_at": string,"engine_version": string,"id": string,"input_fingerprint": string,"iteration": number,"recommendations": NonNullable<Json>,"session_id": string,"stale": boolean
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "catalog_version"?: string,"context_revision": number,"created_at"?: string,"engine_version"?: string,"id"?: string,"input_fingerprint": string,"iteration": number,"recommendations": NonNullable<Json>,"session_id": string,"stale"?: boolean
+                  }
+                  Update: {
+                    "catalog_version"?: string,"context_revision"?: number,"created_at"?: string,"engine_version"?: string,"id"?: string,"input_fingerprint"?: string,"iteration"?: number,"recommendations"?: NonNullable<Json>,"session_id"?: string,"stale"?: boolean
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "match_results_session_id_fkey"
+      columns: ["session_id"]
+isOneToOne: false
+      referencedRelation: "activity_sessions"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"profiles": {
                   Row: {
                     "created_at": string,"display_name": string | null,"id": string,"locale": string,"timezone": string,"updated_at": string
@@ -117,16 +189,42 @@ isOneToOne: false
                   Relationships: [
 
                   ]
-                },"user_preferences": {
+                },"tonight_responses": {
                   Row: {
-                    "interests": (string)[],"updated_at": string,"user_id": string
+                    "answers": NonNullable<Json>,"context_revision": number,"current_step": number,"mode": string,"session_id": string,"share_answers": boolean,"submitted_at": string | null,"updated_at": string,"user_id": string,"version": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "interests"?: (string)[],"updated_at"?: string,"user_id": string
+                    "answers"?: NonNullable<Json>,"context_revision": number,"current_step"?: number,"mode"?: string,"session_id": string,"share_answers"?: boolean,"submitted_at"?: string | null,"updated_at"?: string,"user_id": string,"version"?: number
                   }
                   Update: {
-                    "interests"?: (string)[],"updated_at"?: string,"user_id"?: string
+                    "answers"?: NonNullable<Json>,"context_revision"?: number,"current_step"?: number,"mode"?: string,"session_id"?: string,"share_answers"?: boolean,"submitted_at"?: string | null,"updated_at"?: string,"user_id"?: string,"version"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "tonight_responses_session_id_fkey"
+      columns: ["session_id"]
+isOneToOne: false
+      referencedRelation: "activity_sessions"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "tonight_responses_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"user_preferences": {
+                  Row: {
+                    "answers": NonNullable<Json>,"completed_at": string | null,"interests": (string)[],"onboarding_step": number,"updated_at": string,"user_id": string,"version": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "answers"?: NonNullable<Json>,"completed_at"?: string | null,"interests"?: (string)[],"onboarding_step"?: number,"updated_at"?: string,"user_id": string,"version"?: number
+                  }
+                  Update: {
+                    "answers"?: NonNullable<Json>,"completed_at"?: string | null,"interests"?: (string)[],"onboarding_step"?: number,"updated_at"?: string,"user_id"?: string,"version"?: number
                   }
                   Relationships: [
                     {
@@ -143,7 +241,10 @@ isOneToOne: true
             [_ in never]: never
           }
           Functions: {
-            "create_couple":
+            "calculate_couple_match":
+{ Args: { "p_session": string }; Returns: Json
+                           },
+"create_couple":
 { Args: { "couple_name": string }; Returns: string
                            },
 "get_partner_name":
@@ -154,6 +255,24 @@ isOneToOne: true
                            },
 "join_couple":
 { Args: { "invitation_token": string }; Returns: string
+                           },
+"record_match_feedback":
+{ Args: { "p_concept": string,"p_reason": string,"p_session": string }; Returns: undefined
+                           },
+"save_personal_preferences":
+{ Args: { "p_answers": Json,"p_complete"?: boolean,"p_expected_version": number,"p_step": number }; Returns: number
+                           },
+"save_tonight_response":
+{ Args: { "p_answers": Json,"p_context_revision": number,"p_expected_version": number,"p_mode": string,"p_session": string,"p_share": boolean,"p_step": number,"p_submit"?: boolean }; Returns: number
+                           },
+"select_match_concept":
+{ Args: { "p_concept": string,"p_result": string,"p_session": string }; Returns: undefined
+                           },
+"tonight_progress":
+{ Args: { "p_session": string }; Returns: Json
+                           },
+"update_tonight_context":
+{ Args: { "p_context": Json,"p_expected_revision": number,"p_session": string }; Returns: number
                            }
           }
           Enums: {

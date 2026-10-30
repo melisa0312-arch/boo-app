@@ -19,13 +19,13 @@ export async function saveSession(_: ActionState, form: FormData): Promise<Actio
     }
     return { error: t.invalidInput };
   }
-  const { error } = await supabase.from("activity_sessions").insert({
+  const { data: session, error } = await supabase.from("activity_sessions").insert({
     couple_id: coupleId, created_by: user.id, activity_mode: "go_out", status: "draft",
     activity_date: window.activity_date, start_time: window.start_time, end_time: window.end_time,
     timezone: window.timezone, starting_location: window.starting_location, timing: window.timing,
-  });
+  }).select("id").single();
   if (error) return { error: t.saveError };
   revalidatePath("/tonight");
   revalidatePath("/home");
-  return { success: t.sessionSaved };
+  return { success: t.sessionSaved, sessionId: session!.id };
 }
