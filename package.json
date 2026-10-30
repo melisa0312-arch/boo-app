@@ -1,0 +1,66 @@
+{
+  "name": "boo-app",
+  "version": "0.1.0",
+  "description": "BŪ — a private world for two",
+  "scripts": {
+    "dev": "next dev",
+    "dev:preview": "next dev --hostname 0.0.0.0 --port 3000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "BU_INTEGRATION=1 vitest run tests/integration",
+    "test:e2e": "playwright test",
+    "db:start": "supabase start --exclude studio,storage-api,imgproxy,realtime,logflare,vector,edge-runtime,supavisor",
+    "db:stop": "supabase stop",
+    "db:types": "supabase gen types typescript --local > src/lib/supabase/database.types.ts",
+    "db:test": "supabase test db",
+    "local:start": "node scripts/local-stack.mjs start",
+    "local:stop": "node scripts/local-stack.mjs stop",
+    "local:db-test": "node scripts/local-stack.mjs sql-test",
+    "local:types": "node scripts/db-types.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/melisa0312-arch/boo-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/melisa0312-arch/boo-app/issues"
+  },
+  "dependencies": {
+    "@fontsource-variable/sofia-sans": "^5.3.0",
+    "@fontsource-variable/unbounded": "^5.3.0",
+    "@js-temporal/polyfill": "^0.5.1",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.118.0",
+    "lucide-react": "^1.64.0",
+    "next": "^16.4.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.64.1",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.3",
+    "supabase": "^2.122.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.5"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=24 <25"
+  }
+}

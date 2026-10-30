@@ -1,0 +1,13 @@
+.git/
+.env*
+.local-supabase/
+.supabase/
+supabase/.temp/
+supabase/.branches/
+node_modules/
+.next/
+coverage/
+playwright-report/
+test-results/
+*.log
+*.tsbuildinfo
